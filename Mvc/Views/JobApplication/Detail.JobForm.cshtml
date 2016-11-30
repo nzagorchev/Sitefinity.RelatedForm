@@ -1,0 +1,61 @@
+﻿@model Telerik.Sitefinity.Frontend.Mvc.Models.ContentDetailsViewModel
+
+@using System.Collections;
+@using System.Linq;
+@using Telerik.Sitefinity.Frontend.DynamicContent.WidgetTemplates.Fields.Helpers;
+@using Telerik.Sitefinity;
+@using Telerik.Sitefinity.Data.ContentLinks;
+@using Telerik.Sitefinity.Frontend.Mvc.Helpers;
+@using Telerik.Sitefinity.Libraries.Model;
+@using Telerik.Sitefinity.Localization;
+@using Telerik.Sitefinity.Model;
+@using Telerik.Sitefinity.Model.ContentLinks;
+@using Telerik.Sitefinity.Modules.Pages;
+@using Telerik.Sitefinity.Pages.Model;
+
+<div class="@Model.CssClass" @Html.InlineEditingAttributes(Model.ProviderName, Model.ContentType.FullName, (Guid)Model.Item.Fields.Id)>
+    <h3 @Html.InlineEditingFieldAttributes("Title", "ShortText")>
+        @Model.Item.Fields.Title
+    </h3>
+    <div>
+        @Model.Item.GetDateTime("PublicationDate", "MMM d, yyyy, HH:mm tt")
+        @Html.CommentsCount("", @Model.Item.DataItem)
+    </div>
+
+    @*Start FormId field*@
+    <div>
+        <strong>Form :</strong>
+
+        <div>
+            @Html.Action("IndexCustom", "FormCustom", new { id = Model.Item.Fields.FormId })
+        </div>
+
+        <script>
+            ; (function ($) {
+                if (typeof window.FormData === 'undefined')
+                    return;
+
+                $(function () {
+                    var formContainers = $('[data-sf-role="form-container"]');
+                    formContainers.each(function (i, element) {
+                        var formContainer = $(element);
+                        var formIdElement = formContainer.find('input[data-sf-role="form-id"]');
+                        formIdElement.attr('name', 'id');
+                    });
+                });
+            })(jQuery);
+        </script>
+
+    </div>
+    @*End FormId field*@
+
+    @{        
+        if (Model.EnableSocialSharing)
+        {
+            var item = Model.Item.DataItem as Telerik.Sitefinity.Model.IHasTitle;
+        @Html.SocialShareOptions(item);
+        }
+    }
+
+    @Html.CommentsList(@Model.Item.DataItem)
+</div>
